@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detected Anomalies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <a href="/" class="nav-btn">Dashboard</a>
+    <a href="/anomalies" class="nav-btn">Anomalies</a>
+    <a href="/detect" class="nav-btn">Run Detection</a>
+</nav>
+
+<h1>Detected Anomalies</h1>
+
+<table border="1">
+    <tr>
+        <th>Timestamp</th>
+        <th>Packets</th>
+        <th>Bytes</th>
+        <th>TCP</th>
+        <th>UDP</th>
+        <th>Destinations</th>
+        <th>Ports</th>
+        <th>Score</th>
+        <th>Severity</th>
+        <th>Why Flagged</th>
+    </tr>
+
+    {% for anomaly in anomalies %}
+    <tr>
+        <td>{{ anomaly.timestamp }}</td>
+        <td>{{ anomaly.packet_count }}</td>
+        <td>{{ anomaly.total_bytes }}</td>
+        <td>{{ anomaly.tcp_count }}</td>
+        <td>{{ anomaly.udp_count }}</td>
+        <td>{{ anomaly.unique_destinations }}</td>
+        <td>{{ anomaly.unique_ports }}</td>
+        <td>{{ anomaly.anomaly_score }}</td>
+        <td class="{{ anomaly.severity|lower }}">
+            {{ anomaly.severity }}
+        </td>
+        <td>
+            {% if anomaly.explanations %}
+                <ul>
+                    {% for explanation in anomaly.explanations %}
+                        <li>{{ explanation }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                —
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Anomaly Detector</title>
+    <meta http-equiv="refresh" content="10">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Network Anomaly Detector</h1>
+    <p>Last updated: {{ last_updated }}</p>
+    <p class="status">● Local monitoring dashboard — {{ status }}</p>
+
+    <div class="summary">
+        <div class="card">
+            <h3>Total Traffic</h3>
+            <p>{{ total_records }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Anomalies</h3>
+            <p>{{ total_anomalies }}</p>
+        </div>
+
+        <div class="card">
+            <h3>High Severity</h3>
+            <p>{{ high_anomalies }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Low Severity</h3>
+            <p>{{ low_anomalies }}</p>
+        </div>
+    </div>
+
+    {% if latest_result %}
+    <div class="latest-result">
+        <h2>Latest Detection</h2>
+
+        <p>
+            Prediction:
+            <span class="{% if latest_result.prediction == -1 %}high{% else %}normal{% endif %}">
+                {% if latest_result.prediction == -1 %}
+                    Anomaly
+                {% else %}
+                    Normal
+                {% endif %}
+            </span>
+        </p>
+
+        <p>
+            Severity:
+            <span class="{{ latest_result.severity|lower }}">
+                {{ latest_result.severity }}
+            </span>
+        </p>
+
+        {% if latest_result.explanations %}
+        <p><strong>Why it was flagged:</strong></p>
+
+        <ul>
+            {% for explanation in latest_result.explanations %}
+            <li>{{ explanation }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <p>Anomaly Score: {{ latest_result.score }}</p>
+        <p>Packets: {{ latest_result.packet_count }}</p>
+        <p>Bytes: {{ latest_result.total_bytes }}</p>
+        <p>TCP: {{ latest_result.tcp_count }}</p>
+        <p>UDP: {{ latest_result.udp_count }}</p>
+        <p>Unique Destinations: {{ latest_result.unique_destinations }}</p>
+        <p>Unique Ports: {{ latest_result.unique_ports }}</p>
+    </div>
+    {% else %}
+    <p>No detection has been run yet.</p>
+    {% endif %}
+
+    <h2>Latest Traffic</h2>
+
+    <table border="1">
+        <tr>
+            <th>Timestamp</th>
+            <th>Packets</th>
+            <th>Bytes</th>
+            <th>TCP</th>
+            <th>UDP</th>
+            <th>Destinations</th>
+            <th>Ports</th>
+        </tr>
+
+        {% for record in records %}
+        <tr>
+            <td>{{ record.timestamp }}</td>
+            <td>{{ record.packet_count }}</td>
+            <td>{{ record.total_bytes }}</td>
+            <td>{{ record.tcp_count }}</td>
+            <td>{{ record.udp_count }}</td>
+            <td>{{ record.unique_destinations }}</td>
+            <td>{{ record.unique_ports }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/anomalies">Anomalies</a>
+    <a href="/detect">
+        <button class="detect-btn">Run Detection</button>
+    </a>
+</nav>
+</html>
+
+<h2>Detected Anomalies</h2>
+
+<table border="1">
+    <tr>
+        <th>Timestamp</th>
+        <th>Packets</th>
+        <th>Bytes</th>
+        <th>TCP</th>
+        <th>UDP</th>
+        <th>Destinations</th>
+        <th>Ports</th>
+        <th>Score</th>
+        <th>Severity</th>
+    </tr>
+
+    {% for anomaly in anomalies %}
+    <tr>
+        <td>{{ anomaly.timestamp }}</td>
+        <td>{{ anomaly.packet_count }}</td>
+        <td>{{ anomaly.total_bytes }}</td>
+        <td>{{ anomaly.tcp_count }}</td>
+        <td>{{ anomaly.udp_count }}</td>
+        <td>{{ anomaly.unique_destinations }}</td>
+        <td>{{ anomaly.unique_ports }}</td>
+        <td>{{ anomaly.anomaly_score }}</td>
+        <td>{{ anomaly.severity }}</td><td class="{{ anomaly.severity|lower }}">
+            {{ anomaly.severity }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

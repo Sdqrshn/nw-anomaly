@@ -1,0 +1,27 @@
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Local database and collected traffic
+*.db
+*.sqlite
+*.sqlite3
+
+# Trained model
+model.pkl
+
+# Generated anomaly logs
+anomalies.csv
+anomalies_old*.csv
+
+# IDE and OS
+.vscode/
+.DS_Store
+Thumbs.db
